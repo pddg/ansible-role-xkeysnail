@@ -1,0 +1,21 @@
+galaxy_info:
+  author: pddg
+  description: ansible-role-xkeysnail
+  company: StudioAquatan
+
+  license: MIT
+
+  min_ansible_version: 2.5.0
+
+  platforms:
+    - name: Ubuntu
+      versions:
+      - bionic
+
+  galaxy_tags:
+    - Ubuntu18.04
+    - keyboard
+    - keymap
+    - xkeysnail
+
+dependencies: []
