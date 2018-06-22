@@ -34,7 +34,7 @@ This role is supposed to be used locally. Keep in mind that the name of the exec
 ```yaml
 - hosts: localhost
   roles:
-    - name: pddg.ansible-role-xkeysnail
+    - name: pddg.xkeysnail
       vars:
         xkeysnail_config_dir: /etc/opt/xkeysnail
         xkeysnail_config_file: /path/to/config.py
