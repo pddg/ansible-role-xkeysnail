@@ -13,16 +13,9 @@
     executable: /usr/bin/pip3.4
   become: yes
 
-- name: Obtain path to xkeysnail
-  shell: which xkeysnail
-  register: xkeysnail_path
-  changed_when: false
-  check_mode: no
-
-- name: Confirm xkeysnail command is executable
-  fail:
-    msg: 'Could not find xkeysnail in path.'
-  when: xkeysnail_path.stdout == ""
+- name: Set xkeysnail executable as /usr/bin/xkeysnail
+  set_fact:
+    xkeysnail_path: /usr/bin/xkeysnail
 
 - name: Add user to group 'input'
   user:
@@ -74,7 +67,7 @@
 - name: Allow 'xkeysnail' user to execute xkeysnail without password
   lineinfile:
     path: /etc/sudoers.d/10-installer
-    line: '{{ lookup("env", "USER") }} ALL=(ALL) ALL,(xkeysnail) NOPASSWD: {{ xkeysnail_path.stdout }}'
+    line: '{{ lookup("env", "USER") }} ALL=(ALL) ALL,(xkeysnail) NOPASSWD: {{ xkeysnail_path }}'
   become: yes
 
 - name: Create start up script
