@@ -68,6 +68,7 @@
   lineinfile:
     path: /etc/sudoers.d/10-installer
     line: '{{ lookup("env", "USER") }} ALL=(ALL) ALL,(xkeysnail) NOPASSWD: {{ xkeysnail_path }}'
+    create: yes
   become: yes
 
 - name: Create start up script
