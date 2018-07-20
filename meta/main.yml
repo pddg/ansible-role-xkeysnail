@@ -10,7 +10,10 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-      - bionic
+        - bionic
+    - name: EL
+      versions:
+        - 7
 
   galaxy_tags:
     - Ubuntu18.04
