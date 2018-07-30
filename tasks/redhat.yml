@@ -1,16 +1,21 @@
+- name: Install IUS repository
+  yum:
+    name: 'ius-release-1.0-15.ius.centos7.noarch.rpm'
+  become: yes
+
 - name: Install pip
   yum:
     name: '{{ item }}'
   with_items:
-    - python34
-    - python34-pip
-    - python34-devel
+    - python36u
+    - python36u-pip
+    - python36u-devel
   become: yes
 
 - name: Install xkeysnail
   pip:
     name: xkeysnail
-    executable: /usr/bin/pip3.4
+    executable: /usr/bin/pip3.6
   become: yes
 
 - name: Set xkeysnail executable as /usr/bin/xkeysnail
