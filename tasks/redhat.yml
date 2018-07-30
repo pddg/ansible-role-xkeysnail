@@ -1,6 +1,6 @@
 - name: Install IUS repository
   yum:
-    name: 'ius-release-1.0-15.ius.centos7.noarch.rpm'
+    name: 'https://centos7.iuscommunity.org/ius-release.rpm'
   become: yes
 
 - name: Install pip
