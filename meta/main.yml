@@ -16,7 +16,6 @@ galaxy_info:
         - 7
 
   galaxy_tags:
-    - Ubuntu18.04
     - keyboard
     - keymap
     - xkeysnail
