@@ -1,3 +1,26 @@
-xkeysnail_config_dir: '/etc/opt/xkeysnail'
-xkeysnail_config_file: config.py
+---
+xkeysnail_version: 0.1.0
 
+# xkeysnail_config_home: '{{ ansible_env.XDG_CONFIG_HOME | default(ansible_env.HOME + "/.config") }}'
+
+# xkeysnail_config_dir: '{{ xkeysnail_config_home }}/xkeysnail'
+
+xkeysnail_udev_rules:
+    - path: '/etc/udev/rules.d/40-uinput-xkeysnail.rules'
+      line: 'KERNEL=="uinput", GROUP="uinput"'
+    - path: '/etc/udev/rules.d/40-input-xkeysnail.rules'
+      line: 'KERNEL=="event*", NAME="input/%k", MODE="660", GROUP="input"'
+
+xkeysnail_display_env: ':0'
+
+xkeysnail_groups:
+  - input
+  - uinput
+
+xkeysnail_system_config_dir: '/etc/xkeysnail'
+
+xkeysnail_service_scope: 'user'
+
+xkeysnail_available_scopes:
+  - 'user'
+  - 'system'

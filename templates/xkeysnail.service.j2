@@ -1,0 +1,18 @@
+[Unit]
+Description=Service for xkeysnail
+
+[Service]
+KillMode=process
+ExecStart={{ xkeysnail_executable }} {{ xkeysnail_config_file }} --watch -q
+ExecStartPre=/usr/bin/xhost +SI:localuser:root
+Type=simple
+Restart=always
+{% if xkeysnail_service_scope == 'system' %}
+User={{ xkeysnail_execute_user }}
+Group=input
+{% endif %}
+
+Environment=DISPLAY={{ ansible_env.DISPLAY | default(xkeysnail_display_env)}}
+
+[Install]
+WantedBy=default.target

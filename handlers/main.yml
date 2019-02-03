@@ -1,0 +1,37 @@
+---
+- name: Reload xkeysnail daemon (on user scope)
+  systemd:
+    name: xkeysnail
+    enabled: yes
+    daemon_reload: yes
+    scope: "{{ xkeysnail_service_scope }}"
+  listen: reload_xkeysnail
+  become_user: "{{ ansible_user }}"
+  when: xkeysnail_service_scope == 'user'
+
+- name: Reload xkeysnail daemon
+  systemd:
+    name: xkeysnail
+    enabled: yes
+    daemon_reload: yes
+    scope: "{{ xkeysnail_service_scope }}"
+  listen: reload_xkeysnail
+  when: xkeysnail_service_scope == 'system'
+
+- name: Restart xkeysnail daemon (on user scope)
+  systemd:
+    name: xkeysnail
+    state: restarted
+    scope: "{{ xkeysnail_service_scope }}"
+  listen: restart_xkeysnail
+  become_user: "{{ ansible_user }}"
+  when: xkeysnail_service_scope == 'user'
+
+- name: Restart xkeysnail daemon
+  systemd:
+    name: xkeysnail
+    state: restarted
+    scope: "{{ xkeysnail_service_scope }}"
+  listen: reload_xkeysnail
+  when: xkeysnail_service_scope == 'system'
+
