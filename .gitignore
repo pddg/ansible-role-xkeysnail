@@ -1,0 +1,5 @@
+tests/*
+!tests/*.yml
+
+.vagrant
+*.log

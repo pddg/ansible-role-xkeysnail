@@ -1,9 +1,7 @@
 ---
 xkeysnail_version: 0.1.0
-
-# xkeysnail_config_home: '{{ ansible_env.XDG_CONFIG_HOME | default(ansible_env.HOME + "/.config") }}'
-
-# xkeysnail_config_dir: '{{ xkeysnail_config_home }}/xkeysnail'
+xkeysnail_config_home: '{{ ansible_env.XDG_CONFIG_HOME | default(ansible_env.HOME + "/.config") }}'
+xkeysnail_config_dir: '{{ xkeysnail_config_home }}/xkeysnail'
 
 xkeysnail_udev_rules:
     - path: '/etc/udev/rules.d/40-uinput-xkeysnail.rules'

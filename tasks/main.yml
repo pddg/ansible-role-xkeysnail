@@ -1,34 +1,13 @@
 ---
-- block:
-    - debug:
-        msg: "{{ xkeysnail_service_scope }} is not supported. Use default scope ('user') instead."
-
-    - set_fact:
-        xkeysnail_service_scope: 'user'
-
-  when: xkeysnail_service_scope not in xkeysnail_available_scopes
-
-- name: Setup variables
-  block:
-
-    - set_fact:
-        xkeysnail_config_home: "{{ ansible_env.XDG_CONFIG_HOME | default(ansible_env.HOME + '/.config') }}"
-      become_user: "{{ ansible_user }}"
-
-    - set_fact:
-        xkeysnail_config_dir: "{{ xkeysnail_config_home }}/xkeysnail"
-      when: xkeysnail_config_dir is not defined
-      become_user: "{{ ansible_user }}"
+- name: Check service scope
+  assert:
+    fail_msg: |
+      "'{{ xkeysnail_service_scope }}' is not supported. "
+      "Please select from '{{ xkeysnail_available_scopes }}'"
+    that: xkeysnail_service_scope in xkeysnail_available_scopes
 
 - name: Install xkeysnail
-  block:
-    - include_tasks: "{{ ansible_os_family }}.yml"
-
-    - debug:
-        msg: "xkeysnail is now avaialable at '{{ xkeysnail_executable }}'"
-
-    - debug:
-        msg: "xkeysnail v{{ xkeysnail_install_result.version }} is installed."
+  include_tasks: "{{ ansible_os_family | lower }}.yml"
 
 - name: Ensure that input and uinput group exists
   group:
@@ -36,83 +15,43 @@
   with_items:
     - "{{ xkeysnail_groups }}"
 
-- name: xkeysnail available at user scope
-  block:
-    - name: Add user to group
-      user:
-        name: "{{ ansible_user }}"
-        groups: "{{ xkeysnail_groups }}"
-        append: yes
+- name: Add user to group
+  user:
+    name: "{{ ansible_user }}"
+    groups: "{{ xkeysnail_groups }}"
+    append: yes
 
-    - name: Setup variables
-      set_fact:
-        xkeysnail_execute_user: "{{ ansible_user }}"
-        xkeysnail_service_dir: "{{ xkeysnail_config_home }}/systemd/user"
-      become_user: "{{ ansible_user }}"
+- name: Setup variables
+  set_fact:
+    xkeysnail_execute_user: "{{ ansible_user }}"
+    xkeysnail_service_dir: "{{ xkeysnail_config_home }}/systemd/user"
 
-    - name: Ensure that config directory exists
-      file:
-        path: '{{ item }}'
-        state: directory
-      with_items:
-        - '{{ xkeysnail_config_home }}'
-        - '{{ xkeysnail_config_dir }}'
-        - '{{ xkeysnail_service_dir }}'
-      become_user: "{{ ansible_user }}"
+- name: Ensure that config directory exists
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ xkeysnail_config_home }}'
+    - '{{ xkeysnail_config_dir }}'
+    - '{{ xkeysnail_service_dir }}'
 
-  when: xkeysnail_service_scope == 'user'
-
-- name: xkeysnail available at system scope
-  block:
-    - name: Add system user to exec xkeysnail
-      user:
-        name: 'xkeysnail'
-        groups:
-          - "{{ xkeysnail_groups }}"
-        create_home: no
-        system: yes
-        shell: /sbin/nologin
-        append: yes
-
-    - name: Setup variables
-      set_fact:
-        xkeysnail_execute_user: "xkeysnail"
-        xkeysnail_config_dir: "{{ xkeysnail_system_config_dir }}"
-        xkeysnail_service_dir: "/etc/systemd/system"
-
-    - name: Ensure that config directory exists
-      file:
-        path: '{{ item }}'
-        state: directory
-      with_items:
-        - '{{ xkeysnail_config_home }}'
-        - '{{ xkeysnail_config_dir }}'
-        - '{{ xkeysnail_service_dir }}'
-
-  when: xkeysnail_service_scope == 'system'
-
-- block:
-    - name: Download config.py from given gist url
-      get_url:
-        url: "{{ xkeysnail_config_gist_url }}/raw/config.py"
-        dest: "/tmp/"
-      register: xkeysnail_config_download
-      until: xkeysnail_config_download is succeeded
-      retries: 3
-      delay: 5
-
-    - set_fact:
-        xkeysnail_config_file: '/tmp/config.py'
-        xkeysnail_config_file_remote: yes
-
+- name: Download config.py from given gist url
+  get_url:
+    url: "{{ xkeysnail_config_gist_url }}/raw/config.py"
+    dest: "{{ xkeysnail_config_dir }}/"
+  register: xkeysnail_config_download
+  until: xkeysnail_config_download is succeeded
+  retries: 3
+  delay: 5
   when: xkeysnail_config_gist_url is defined
+  notify:
+    - restart_xkeysnail
 
-- name: Place config file
+- name: Copy config.py
   copy:
+    src: 'files/config.py'
     dest: '{{ xkeysnail_config_dir }}'
-    src: '{{ xkeysnail_config_file }}'
-    remote_src: "{{ xkeysnail_config_gist_url is defined }}"
-    mode: o+r
+  when: xkeysnail_config_gist_url is not defined
   notify:
     - restart_xkeysnail
 
@@ -131,17 +70,9 @@
   notify:
     - reload_xkeysnail
 
-# - name: Enable xkeysnail service
-#   systemd:
-#     name: xkeysnail
-#     enabled: yes
-#     state: started
-#   when: xkeysnail_service_scope == 'system'
-# 
-# - name: Enable xkeysnail service (in user scope)
-#   systemd:
-#     name: xkeysnail
-#     enabled: yes
-#     state: started
-#     scope: "{{ xkeysnail_service_scope }}"
-
+- name: Enable xkeysnail service
+  systemd:
+    name: xkeysnail
+    enabled: yes
+    state: started
+    scope: user
