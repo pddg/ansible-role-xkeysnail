@@ -9,7 +9,7 @@ Type=simple
 Restart=always
 RestartSec=5
 
-Environment=DISPLAY={{ xkeysnail_display_env }}
+Environment=DISPLAY={{ ansible_env.DISPLAY | default(xkeysnail_display_env) }}
 
 [Install]
 WantedBy=graphical.target

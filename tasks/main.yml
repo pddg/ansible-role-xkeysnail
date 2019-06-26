@@ -57,6 +57,18 @@
     - "{{ xkeysnail_udev_rules }}"
   become: yes
 
+- name: Add rules for apparmor
+  template:
+    src: usr.local.bin.xkeysnail.j2
+    dest: /etc/apparmor.d/usr.local.bin.xkeysnail
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+  when: xkeysnail_apparmor_enabled | bool
+  notify:
+    - reload_apparmor_for_xkeysnail
+
 - name: Place service file
   template:
     src: xkeysnail.service.j2

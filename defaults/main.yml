@@ -18,3 +18,5 @@ xkeysnail_groups:
 
 xkeysnail_service_dir: "{{ xkeysnail_config_home }}/systemd/user"
 xkeysnail_args: "--watch -q"
+
+xkeysnail_apparmor_enabled: no

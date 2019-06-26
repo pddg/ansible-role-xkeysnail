@@ -1,0 +1,30 @@
+#include <tunables/global>
+
+/usr/local/bin/xkeysnail {
+  #include <abstractions/base>
+  #include <abstractions/python>
+
+  /usr/local/bin/ r,
+  /usr/local/bin/xkeysnail r,
+  /usr/bin/dash ix,
+  /usr/bin/uname ix,
+
+  /usr/local/lib/python3.*/dist-packages/** r,
+  /usr/local/lib/python3.*/dist-packages/xkeysnail/**.pyc mr,
+
+  /usr/share/dpkg/* r,
+
+  /dev/input/ r,
+  /dev/input/* rw,
+  /dev/uinput rw,
+  /tmp/.X11-unix/* rw,
+  /proc/*/mounts r,
+  /proc/*/fd/ r,
+
+  /etc/passwd r,
+  /etc/nsswitch.conf r,
+  /etc/default/apport r,
+  /etc/apt/** r,
+
+  {{ xkeysnail_config_dir }}/*.py r,
+}

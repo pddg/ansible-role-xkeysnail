@@ -13,3 +13,8 @@
     state: restarted
     scope: user
   listen: restart_xkeysnail
+
+- name: Reload apparmor rule
+  shell: apparmor_parser -r /etc/apparmor.d/usr.local.bin.xkeysnail
+  listen: reload_apparmor_for_xkeysnail
+  become: yes
