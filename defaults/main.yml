@@ -1,7 +1,8 @@
 ---
-xkeysnail_version: 0.1.0
+xkeysnail_version: 0.2.0
 xkeysnail_config_home: '{{ ansible_env.XDG_CONFIG_HOME | default(ansible_env.HOME + "/.config") }}'
 xkeysnail_config_dir: '{{ xkeysnail_config_home }}/xkeysnail'
+xkeysnail_execute_user: "{{ ansible_user }}"
 
 xkeysnail_udev_rules:
     - path: '/etc/udev/rules.d/40-uinput-xkeysnail.rules'
@@ -15,10 +16,5 @@ xkeysnail_groups:
   - input
   - uinput
 
-xkeysnail_system_config_dir: '/etc/xkeysnail'
-
-xkeysnail_service_scope: 'user'
-
-xkeysnail_available_scopes:
-  - 'user'
-  - 'system'
+xkeysnail_service_dir: "{{ xkeysnail_config_home }}/systemd/user"
+xkeysnail_args: "--watch -q"

@@ -1,28 +1,31 @@
 - name: Add IUS repository
   yum:
-    name: 'https://centos7.iuscommunity.org/ius-release.rpm'
+    name:
+      - 'https://centos7.iuscommunity.org/ius-release.rpm'
+  become: yes
 
 - name: Install dependencies
   yum:
-    name: "{{ xkeysnail_dependencies }}"
-    update_cache: yes
-  vars:
-    xkeysnail_dependencies:
+    name:
       - python36u
       - python36u-pip
       - python36u-setuptools
       - python36u-devel
       - "kernel-headers-{{ ansible_kernel }}"
       - gcc
+    update_cache: yes
+  become: yes
 
 - name: Install xkeysnail
   pip:
-    name: "xkeysnail"
+    name:
+      - "xkeysnail"
     version: "{{ xkeysnail_version }}"
     executable: /usr/bin/pip3.6
   register: xkeysnail_install_result
   vars:
     ansible_python_interpreter: /usr/bin/python3.6
+  become: yes
 
 - name: Set xkeysnail executable as /usr/bin/xkeysnail
   set_fact:

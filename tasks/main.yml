@@ -1,11 +1,4 @@
 ---
-- name: Check service scope
-  assert:
-    fail_msg: |
-      "'{{ xkeysnail_service_scope }}' is not supported. "
-      "Please select from '{{ xkeysnail_available_scopes }}'"
-    that: xkeysnail_service_scope in xkeysnail_available_scopes
-
 - name: Install xkeysnail
   include_tasks: "{{ ansible_os_family | lower }}.yml"
 
@@ -20,16 +13,14 @@
     name: "{{ ansible_user }}"
     groups: "{{ xkeysnail_groups }}"
     append: yes
-
-- name: Setup variables
-  set_fact:
-    xkeysnail_execute_user: "{{ ansible_user }}"
-    xkeysnail_service_dir: "{{ xkeysnail_config_home }}/systemd/user"
+  become: yes
 
 - name: Ensure that config directory exists
   file:
     path: '{{ item }}'
     state: directory
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
   with_items:
     - '{{ xkeysnail_config_home }}'
     - '{{ xkeysnail_config_dir }}'
@@ -51,6 +42,8 @@
   copy:
     src: 'files/config.py'
     dest: '{{ xkeysnail_config_dir }}'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
   when: xkeysnail_config_gist_url is not defined
   notify:
     - restart_xkeysnail
@@ -62,11 +55,15 @@
     create: yes
   with_items:
     - "{{ xkeysnail_udev_rules }}"
+  become: yes
 
 - name: Place service file
   template:
     src: xkeysnail.service.j2
     dest: "{{ xkeysnail_service_dir }}/xkeysnail.service"
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: 0600
   notify:
     - reload_xkeysnail
 

@@ -1,8 +1,8 @@
 ---
-- hosts: all
+- hosts: localhost
   roles:
     - name: ../../.
-      become: yes
   vars:
+    xkeysnail_display_env: ":1"
     xkeysnail_config_gist_url: "https://gist.github.com/pddg/67eca68fc58336d55ff9834d0a2b0e7f"
 
