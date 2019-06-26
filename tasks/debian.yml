@@ -63,6 +63,7 @@
   lineinfile:
     path: /etc/sudoers.d/10-installer
     line: '{{ lookup("env", "USER") }} ALL=(ALL) ALL,(xkeysnail) NOPASSWD: {{ xkeysnail_path.stdout }}'
+    create: yes
   become: yes
 
 - name: Create start up script
@@ -71,6 +72,11 @@
     dest: '{{ xkeysnail_config_dir }}/start-xkeysnail.sh'
     mode: a+x
   become: yes
+
+- name: create user autostart directory
+  file:
+    path: ~/.config/autostart
+    state: directory
 
 - name: Register start up script
   template:
